@@ -20,12 +20,15 @@ int main() {
   freopen("./day7.txt", "r", stdin);
   string input = "";
   string hold = "";
-  int result = 0;
+  long long result = 0;
   vector<vector<int>> data;
+  vector<long long> totals;
 
   while (getline(cin, input)) {
     vector<int> list;
     istringstream iss(input);
+    iss >> hold;
+    totals.push_back(stoll(hold));
     while (iss >> hold) {
       list.push_back(stoi(hold));
     }
@@ -33,47 +36,43 @@ int main() {
     data.push_back(list);
   }
 
-  for (auto i : data) {
+  int pos_ll = 0;
+  for (auto line : data) {
 
-    int total = i[0];
-    i.erase(i.begin());
-    int op_len = i.size() - 1;
+    bool found = false;
+    long long total = totals[pos_ll];
+    int op_len = line.size() - 1;
     vector<vector<int>> ops_list;
-    vector<int> i_copy;
-    vector<int> k_copy;
     vector<int> ops;
-    int plus_hold = 0;
-    bool times_flag = false;
-    int ops_pos = 0;
+    long long hold = 0;
+    hold += line[0];
+    int pos = 1;
     dfs(ops_list, ops, op_len);
-    for (auto k : ops_list) {
-      i_copy = i;
-      k_copy = k;
-      cout << total << "\n";
-      for (auto z : k_copy) {
-        cout << z << " ";
-      }
-      cout << "\n";
-      plus_hold = 0;
-      while (i_copy.size() > 1) {
-        if (k_copy[k_copy.size() - 1] == 1) {
-          plus_hold += i_copy[i_copy.size() - 1];
-          i_copy.pop_back();
-          k_copy.pop_back();
-        } else if (k_copy[k_copy.size() - 1] == 2) {
-          i_copy[i_copy.size() - 2] *= i_copy[i_copy.size() - 1];
-          i_copy.pop_back();
-          k_copy.pop_back();
-        }
-      }
-
-      if ((i_copy[0] + plus_hold) == total) {
-        cout << "true\n";
-        cout << total << "\n";
-        result += (i_copy[0] + plus_hold);
+    for (auto potential_operator : ops_list) {
+      if (found) {
         break;
       }
+      hold = line[0];
+      pos = 1;
+      for (auto cur_op : potential_operator) {
+
+        if (cur_op == 1) {
+          hold += line[pos];
+        } else if (cur_op == 2) {
+          hold *= line[pos];
+        }
+
+        pos++;
+      }
+
+      if (hold == total) {
+        if (!found) {
+          result += total;
+        }
+        found = true;
+      }
     }
+    pos_ll++;
   }
 
   cout << result << "\n";
