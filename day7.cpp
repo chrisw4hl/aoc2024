@@ -36,20 +36,46 @@ int main() {
   for (auto i : data) {
 
     int total = i[0];
-    int op_len = i.size() - 2;
+    i.erase(i.begin());
+    int op_len = i.size() - 1;
     vector<vector<int>> ops_list;
+    vector<int> i_copy;
+    vector<int> k_copy;
     vector<int> ops;
+    int plus_hold = 0;
+    bool times_flag = false;
+    int ops_pos = 0;
     dfs(ops_list, ops, op_len);
     for (auto k : ops_list) {
-      for (auto m : k) {
-        cout << m << " ";
+      i_copy = i;
+      k_copy = k;
+      cout << total << "\n";
+      for (auto z : k_copy) {
+        cout << z << " ";
       }
       cout << "\n";
+      plus_hold = 0;
+      while (i_copy.size() > 1) {
+        if (k_copy[k_copy.size() - 1] == 1) {
+          plus_hold += i_copy[i_copy.size() - 1];
+          i_copy.pop_back();
+          k_copy.pop_back();
+        } else if (k_copy[k_copy.size() - 1] == 2) {
+          i_copy[i_copy.size() - 2] *= i_copy[i_copy.size() - 1];
+          i_copy.pop_back();
+          k_copy.pop_back();
+        }
+      }
+
+      if ((i_copy[0] + plus_hold) == total) {
+        cout << "true\n";
+        cout << total << "\n";
+        result += (i_copy[0] + plus_hold);
+        break;
+      }
     }
-    for (int j = 1; j < i.size(); j++) {
-      cout << i[j] << " ";
-    }
-    cout << "\n";
   }
+
+  cout << result << "\n";
   return 0;
 }
